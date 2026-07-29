@@ -9,6 +9,7 @@ import re
 from datetime import datetime, timedelta
 from enum import StrEnum
 from typing import Dict
+import json
 
 import rules_engine.constants as constants
 
@@ -294,8 +295,18 @@ def _parse_gas_bill_national_grid(data: str) -> NaturalGasBillingInput:
     records = []
     for row in reader:
         parsed_row = _GasBillRowNationalGrid(row, column_names)
-        period_start_date = _get_date_from_string(parsed_row.start_date)
-        period_end_date = _get_date_from_string(parsed_row.end_date)
+
+        try:
+            period_start_date = _get_date_from_string(parsed_row.start_date)
+            period_end_date = _get_date_from_string(parsed_row.end_date)
+        except Exception as e:
+            return json.dumps({
+                "success": False,
+                "error": {
+                    "type": type(e).__name__,
+                    "message": str(e)
+                }
+            })
 
         record = NaturalGasBillingRecordInput(
             period_start_date=period_start_date,

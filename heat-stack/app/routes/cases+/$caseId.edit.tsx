@@ -78,6 +78,7 @@ export async function loader({ params, request }: Route.LoaderArgs) {
 			.filter((date): date is Date => date !== null && date !== undefined)
 
 		if (dates.length > 0) {
+
 			const startDate = new Date(Math.min(...dates.map((d) => d.getTime())))
 			const endDate = new Date(Math.max(...dates.map((d) => d.getTime())))
 
